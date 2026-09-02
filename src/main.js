@@ -1,0 +1,154 @@
+import './styles/index.css';
+import { initBouncyTabs } from './motion/bouncy-tabs.js';
+import { initInkbleed } from './motion/inkbleed.js';
+import { initCopyEmail } from './motion/copy-email.js';
+import { onResize, vp } from './lib/viewport.js';
+
+const body = document.body;
+body.classList.add('is-loading');
+
+// ---- above the fold, synchronous ----------------------------------------
+initBouncyTabs(document.querySelector('.hero'));
+initInkbleed(document.querySelector('.hero__logo svg'));
+initCopyEmail(document);
+
+// ---- hero WebGL ----------------------------------------------------------
+const stage = document.querySelector('.stage-gl');
+const heroBlock = document.querySelector('.hero__title');
+const heroTitle = document.querySelector('.headline-text');
+const veil = document.querySelector('.nav-veil');
+
+let grid = null;
+let warp = null;
+
+function fallbackToDom() {
+  body.classList.add('no-webgl');
+  if (stage) stage.style.display = 'none';
+}
+
+async function bootHero() {
+  if (!stage) return;
+  try {
+    const [{ initHeroGrid }, { initTitleWarp }] = await Promise.all([
+      import('./hero/hero-grid.js'),
+      import('./hero/title-warp.js'),
+    ]);
+
+    grid = await initHeroGrid(stage, { onLost: fallbackToDom });
+    if (!grid) { fallbackToDom(); return; }
+
+    if (heroTitle && !vp.reduced) {
+      warp = await initTitleWarp(document.querySelector('.hero__title'), heroTitle);
+    }
+
+    stage.style.opacity = '1';
+    grid.setAlpha(0);
+    warp?.setAlpha(0);
+    const t0 = performance.now();
+    (function fadeIn(now) {
+      const k = Math.min(1, (now - t0) / 600);
+      grid.setAlpha(k);
+      warp?.setAlpha(k);
+      if (k < 1) requestAnimationFrame(fadeIn);
+    })(t0);
+
+    body.classList.add('hero-css-on');
+  } catch (e) {
+    console.warn('[hero]', e);
+    fallbackToDom();
+  } finally {
+    body.classList.remove('is-loading');
+  }
+}
+
+// ---- everything past the hero, lazily -----------------------------------
+let booted = false;
+async function bootRest() {
+  if (booted) return;
+  booted = true;
+
+  const { initScroll, gsap, ScrollTrigger } = await import('./lib/scroll.js');
+  initScroll();
+
+  const [
+    { initHighlightText },
+    { initPageBend },
+    { initElasticPulse },
+    { initFeatured },
+    { initAbout },
+    { initOutro },
+  ] = await Promise.all([
+    import('./motion/highlight-text.js'),
+    import('./motion/fold-mode.js'),
+    import('./motion/elastic-pulse.js'),
+    import('./motion/featured.js'),
+    import('./motion/about.js'),
+    import('./motion/outro.js'),
+  ]);
+
+  initHighlightText(document);
+  initPageBend(document);
+  initElasticPulse(document);
+  initFeatured(document.querySelector('.section--featured'));
+  initAbout(document.querySelector('.about'));
+  initOutro(document.querySelector('.outro'));
+
+  const [{ initStory }, { initWork }] = await Promise.all([
+    import('./story/story.js'),
+    import('./work/work.js'),
+  ]);
+  initStory(document.querySelector('.section--focus'));
+  initWork(document.querySelector('.section--work'));
+
+  // The flight spacer drives the hero dolly and hands off through the veil.
+  const flight = document.querySelector('.flight');
+  if (flight) {
+    ScrollTrigger.create({
+      trigger: flight,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: true,
+      onUpdate: (self) => {
+        const p = self.progress;
+        grid?.setFlight(p);
+        // Title fades out early; the grid rides the whole flight. The whole
+        // fixed title block goes with it, or the eyebrow and scroll hint sit
+        // on top of the lede forever.
+        const titleFade = Math.max(0, 1 - p * 3.2);
+        warp?.setAlpha(titleFade);
+        if (heroBlock) {
+          heroBlock.style.opacity = String(titleFade);
+          heroBlock.style.visibility = titleFade < 0.01 ? 'hidden' : 'visible';
+        }
+        grid?.setAlpha(p > 0.86 ? Math.max(0, 1 - (p - 0.86) / 0.14) : 1);
+        if (veil) veil.style.opacity = p > 0.82 ? String(Math.min(1, (p - 0.82) / 0.12)) : '0';
+      },
+      onLeave: () => { if (veil) veil.style.opacity = '0'; },
+    });
+  }
+
+  ScrollTrigger.refresh();
+}
+
+const kick = () => bootRest();
+window.addEventListener('wheel', kick, { once: true, passive: true });
+window.addEventListener('touchstart', kick, { once: true, passive: true });
+window.addEventListener('load', kick, { once: true });
+
+bootHero();
+
+// Smooth anchor jumps through Lenis when it exists.
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const id = a.getAttribute('href').slice(1);
+  const el = id && document.getElementById(id);
+  if (!el) return;
+  e.preventDefault();
+  bootRest().then(async () => {
+    const { lenis } = await import('./lib/scroll.js');
+    lenis ? lenis.scrollTo(el, { offset: -40 }) : el.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+onResize(() => {}, false);

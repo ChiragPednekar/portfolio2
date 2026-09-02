@@ -1,0 +1,89 @@
+:root {
+  /* ---- Color ---- */
+  --bg: #000;
+  --text: #fff;
+  --headline: #ece9e2;
+  --headline-alt: #f2efe8;
+  --body: rgba(255, 255, 255, .86);
+  --dim: #3a3a3a;
+  --bright: #eafdff;
+  --glass: #1c1c1e8c;
+  --ghost: #ffffff1f;
+  --hairline: #ffffff14;
+  --tile-bg: #121212;
+  --shot-bg: #0b0b0f;
+
+  /* ---- Fluid type engine ---- */
+  --size-unit: 16;
+  --size-container-ideal: 1660;
+  --size-container-min: 992px;
+  --size-container-max: 1660px;
+  --size-container: clamp(var(--size-container-min), 100vw, var(--size-container-max));
+  --size-font: calc(var(--size-container) / (var(--size-container-ideal) / var(--size-unit)));
+
+  /* ---- Typography ---- */
+  --font-display: "Anton", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --font-ui: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --font-script: "Dancing Script", "Brush Script MT", cursive;
+
+  /* ---- Motion ---- */
+  --band-gap: 14vh;
+  --fold-persp: 1100px;
+  --fold-angle: 64;
+  --fold-round: 300;
+  --fold-zone: 150;
+  --fold-fade-in: 380;
+  --fold-fade-out: 1000;
+  --fold-dir: -1;
+
+  /* ---- Hero warp shader tunables (read by JS via getComputedStyle) ---- */
+  --warp-angle: 78;
+  --warp-persp: 2600;
+  --warp-rise: 3;
+  --warp-ease: 1.7;
+  --warp-vary: .09;
+
+  /* ---- Story ---- */
+  --story-scale: 1;
+  --display-size: min(120px, 15vw);
+
+  caret-color: transparent;
+}
+
+@media (max-width: 991px) {
+  :root {
+    --size-container-ideal: 834;
+    --size-container-min: 768px;
+    --size-container-max: 991px;
+    --story-scale: .846;
+    --display-size: min(104px, 16vw);
+    --warp-rise: 1.2;
+    --warp-persp: 1900;
+    --fold-angle: 36;
+    --fold-round: 132;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --size-container-ideal: 550;
+    --size-container-min: 480px;
+    --size-container-max: 767px;
+    --story-scale: .699;
+    --display-size: 19vw;
+    --warp-persp: 1400;
+    --warp-angle: 62;
+  }
+}
+
+@media (max-width: 479px) {
+  :root {
+    --size-container-ideal: 390;
+    --size-container-min: 320px;
+    --size-container-max: 479px;
+    --story-scale: .628;
+    --display-size: min(64px, 9vw);
+    --warp-persp: 1100;
+    --warp-angle: 52;
+  }
+}

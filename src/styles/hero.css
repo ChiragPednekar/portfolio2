@@ -1,0 +1,99 @@
+/* ---- fixed nav row ---- */
+.hero {
+  position: fixed; z-index: 20; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: calc(var(--size-font) * 1.5);
+  padding: calc(var(--size-font) * 1.6) calc(var(--size-font) * 2);
+  pointer-events: none;
+}
+.hero > * { pointer-events: auto; }
+
+.hero__logo { display: block; width: 145px; height: 32px; color: var(--text); }
+.hero__logo svg { width: 145px; height: 32px; overflow: visible; }
+.hero__logo svg.is-static .ink-masked { mask: none; opacity: 1; }
+
+.hero__nav {
+  position: relative; display: flex; align-items: center; gap: .125rem;
+  padding: .3rem; border-radius: 999px; background: var(--glass);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+}
+.hero__nav a {
+  position: relative; z-index: 2;
+  padding: .5rem .95rem; border-radius: 999px;
+  font-size: 14px; letter-spacing: -0.005em; white-space: nowrap;
+  color: rgba(255,255,255,.72); transition: color .22s ease;
+}
+.hero__nav a[data-active], .hero__nav a:hover { color: #fff; }
+.hero__nav-pill, .hero__nav-ghost {
+  position: absolute; top: 0; left: 0; width: 3em; height: 2em;
+  border-radius: 999px; pointer-events: none;
+}
+.hero__nav-pill { z-index: 0; background: #ffffff26; box-shadow: inset 0 0 0 1px #ffffff1f; }
+.hero__nav-ghost { z-index: 1; background: var(--ghost); opacity: 0; visibility: hidden; }
+
+.hero__meta { display: flex; align-items: center; gap: calc(var(--size-font) * 1.1); }
+.hero__where { font-size: 13px; color: rgba(255,255,255,.44); }
+.hero__mail {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-size: 14px; padding: .5rem .9rem; border-radius: 999px;
+  background: var(--glass); backdrop-filter: blur(18px);
+  transform-origin: 50% 50%;
+}
+.hero__mail.is-copied { color: var(--bright); }
+.copy-email-icon { width: 15px; height: 15px; opacity: .7; }
+
+@media (max-width: 767px) {
+  .hero__where { display: none; }
+  .hero { padding: 1rem 1.1rem; }
+  .hero__logo, .hero__logo svg { width: 112px; height: 25px; }
+  .hero__nav a { padding: .45rem .7rem; font-size: 13px; }
+}
+
+/* ---- hero title block ---- */
+.hero__title {
+  position: fixed; inset: 0; z-index: 5;
+  display: grid; place-content: center; justify-items: center;
+  pointer-events: none; padding: 0 5vw;
+}
+.hero__eyebrow {
+  font-size: 13px; letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(255,255,255,.5); margin: 0 0 1.4rem;
+}
+.headline-text {
+  margin: 0; padding: 0;
+  display: grid; place-content: center; text-align: center;
+  font-family: var(--font-ui);
+  font-weight: 400; text-transform: uppercase;
+  font-size: clamp(2rem, 8vw, 7rem); line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--headline); pointer-events: none;
+  white-space: pre-line;
+}
+/* When the shader is live the DOM copy stays for screen readers only. */
+.headline-text.is-warping { opacity: 0; }
+.title-warp {
+  position: fixed; inset: 0; z-index: 5;
+  width: 100%; height: 100svh; pointer-events: none;
+}
+.hero__sign {
+  font-family: var(--font-script);
+  font-size: 38px; line-height: 1;
+  color: var(--headline-alt); margin: 1.6rem 0 0; opacity: .9;
+}
+.hero__range { font-size: 13px; color: rgba(255,255,255,.4); margin: .8rem 0 0; letter-spacing: .04em; }
+
+/* ---- DOM fallback grid ---- */
+.infinite-grid {
+  position: fixed; inset: 0; z-index: 1; touch-action: pan-y;
+  width: 100%; height: 100svh; overflow: clip; cursor: grab;
+  transition: opacity .5s ease; display: none;
+}
+body.no-webgl .infinite-grid { display: block; }
+.infinite-grid__item {
+  position: absolute; aspect-ratio: 1; width: 13em; padding: 2.25em;
+  font-size: clamp(1.5em, 2vw, 3em);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--tile-bg); border-radius: 18px;
+  will-change: transform; backface-visibility: hidden;
+}
