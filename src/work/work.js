@@ -50,11 +50,15 @@ export function initWork(section) {
   section.querySelectorAll('.work__item').forEach((item, i) => {
     const head = item.querySelector('.work__head');
     if (head) {
+      // Fires as the item starts entering, so the name lands before its photos
+      // rather than after them. Nothing else writes opacity on the head now —
+      // it used to also carry data-fold, and fold-mode's per-frame opacity
+      // write clobbered this tween mid-flight.
       gsap.fromTo(head,
-        { y: 48, opacity: 0 },
+        { y: 40, opacity: 0 },
         {
-          y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
-          scrollTrigger: { trigger: item, start: 'top 72%', once: true },
+          y: 0, opacity: 1, duration: 0.75, ease: 'power3.out',
+          scrollTrigger: { trigger: item, start: 'top 92%', once: true },
         });
     }
     const slider = sliders[i];

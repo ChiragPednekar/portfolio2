@@ -89,7 +89,7 @@ def project(p):
     n = len(p['items'])
     unit = 'film' if n == 1 else 'films'
     return f'''    <article class="work__item">
-      <div class="work__head" data-fold>
+      <div class="work__head">
         <div class="work__meta">{badge}<span class="work__year">{esc(p["year"])}</span><span class="work__count">{n} {unit}</span></div>
         <h3 class="work__name"><span class="work__name-link is-bend" data-bend>{esc(p["client"])}</span></h3>
         <p class="work__lead">{esc(p["lead"])}</p>
