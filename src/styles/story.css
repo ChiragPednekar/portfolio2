@@ -1,4 +1,4 @@
-.section--focus {
+.section.section--focus {
   min-height: calc(var(--story-viewports, 19.35) * var(--story-scale) * 100vh);
   align-content: start;
   max-width: none; margin: 0; padding: 0; display: block;
@@ -170,7 +170,7 @@
 
 @keyframes fallback-earn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .section--focus { min-height: auto; }
+  .section.section--focus { min-height: auto; }
   .focus__stage { height: auto; display: block; }
   .story__act { position: relative; inset: auto; visibility: visible; padding: 14vh 6vw; }
   .validation__canvas { display: none; }

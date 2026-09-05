@@ -1,4 +1,4 @@
-.section--work {
+.section.section--work {
   --work-indent: 6vw;
   --work-fit-pad: clamp(1rem, 2.6vh, 2.25rem);
   --work-copy: 840px;

@@ -1,8 +1,5 @@
-@import './tokens.css';
-@import './base.css';
-@import './hero.css';
 
-.case { max-width: none; margin: 0; padding: 22vh 6vw 12vh; display: block; }
+.section.case { max-width: none; margin: 0; padding: 22vh 6vw 12vh; display: block; }
 .case__inner { max-width: 900px; margin: 0 auto; }
 .case__meta { display: flex; gap: .9rem; align-items: center; margin-bottom: 1.2rem; }
 .case__year { font-size: 13px; color: rgba(255,255,255,.42); letter-spacing: .06em; }

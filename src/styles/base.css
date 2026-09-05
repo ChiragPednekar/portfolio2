@@ -70,7 +70,7 @@ body.no-webgl .fallback {
 .fallback__line { display: block; }
 
 /* ---- lede ---- */
-.section--lede { perspective: var(--fold-persp); }
+.section.section--lede { perspective: var(--fold-persp); }
 .section--lede h2 {
   margin: 0;
   font-size: calc(var(--size-font) * 2.98);
@@ -91,7 +91,7 @@ body.no-webgl .fallback {
 }
 
 /* ---- featured band ---- */
-.section--featured {
+.section.section--featured {
   min-height: 0; display: block; max-width: none;
   margin: 0; padding: var(--band-gap) 0 0; background: #000;
 }

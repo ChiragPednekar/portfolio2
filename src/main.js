@@ -1,4 +1,12 @@
-import './styles/index.css';
+// Imported explicitly and in order. A CSS @import chain gets re-ordered when
+// Vite bundles multiple entries into one stylesheet, which silently flips
+// which of two equal-specificity rules wins.
+import './styles/tokens.css';
+import './styles/base.css';
+import './styles/hero.css';
+import './styles/story.css';
+import './styles/work.css';
+import './styles/about.css';
 import { initBouncyTabs } from './motion/bouncy-tabs.js';
 import { initInkbleed } from './motion/inkbleed.js';
 import { initCopyEmail } from './motion/copy-email.js';

@@ -1,3 +1,6 @@
+import './styles/tokens.css';
+import './styles/base.css';
+import './styles/hero.css';
 import './styles/case.css';
 import { initInkbleed } from './motion/inkbleed.js';
 import { initCopyEmail } from './motion/copy-email.js';
