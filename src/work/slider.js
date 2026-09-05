@@ -22,6 +22,7 @@ export function initSlider(root) {
   let step = 0;
   let index = 0;
   let maxIndex = 0;
+  let vpW = 0;      // cached: reading clientWidth inside bend() forces layout
 
   function measure() {
     const spv = num(root, '--spv', 1.19);
@@ -31,6 +32,7 @@ export function initSlider(root) {
     // measure before first layout). Carrying on writes negative widths and
     // collapses the track.
     if (vw <= 0) return;
+    vpW = vw;
     slideW = (vw - gap * (spv - 1)) / spv;
     step = slideW + gap;
     maxIndex = Math.max(0, slides.length - 1);
@@ -52,7 +54,8 @@ export function initSlider(root) {
     const round = num(root, '--bend-round', 420);
     const dir = num(root, '--bend-dir', 1);
     const x = gsap.getProperty(track, 'x');
-    const centre = viewport.clientWidth / 2;
+    const centre = vpW / 2;
+    if (!centre) return;
 
     slides.forEach((s, i) => {
       const sc = x + i * step + slideW / 2;

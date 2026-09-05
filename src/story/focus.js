@@ -1,5 +1,10 @@
 import { gsap } from 'gsap';
 
+// Resolved once. These were being parsed ~14 times per frame inside the loop.
+const EASE_IO2 = gsap.parseEase('power2.inOut');
+const EASE_O3 = gsap.parseEase('power3.out');
+const EASE_O1 = gsap.parseEase('power1.out');
+
 // Act 2 — two dots converge, merge through an SVG goo filter, and detonate.
 // Core is CSS/SVG; the chroma pass is optional WebGL behind a try/catch.
 export function makeFocus(root) {
@@ -45,7 +50,7 @@ export function makeFocus(root) {
     const burst = clamp01((p - 0.52) / 0.18);
     const after = clamp01((p - 0.70) / 0.30);
 
-    const eased = gsap.parseEase('power2.inOut')(approach);
+    const eased = EASE_IO2(approach);
     const gap = (1 - eased) * 40 + (1 - merge) * 2;
 
     gsap.set(dotL, { xPercent: -gap * 10, scale: 1 + merge * 0.5 - burst * 0.5 });
@@ -56,22 +61,22 @@ export function makeFocus(root) {
 
     if (charge) gsap.set(charge, { opacity: merge * (1 - burst), scale: 0.4 + merge * 0.8 });
 
-    const flashE = gsap.parseEase('power3.out')(burst);
+    const flashE = EASE_O3(burst);
     if (flash) gsap.set(flash, { opacity: burst < 1 ? flashE * (1 - burst) * 1.6 : 0, scale: 0.5 + flashE * 3 });
     if (glow) gsap.set(glow, { opacity: 0.15 + burst * 0.7 - after * 0.5, scale: 0.6 + burst * 1.4 });
 
     rings.forEach((r, i) => {
       const d = clamp01((burst - i * 0.12) / 0.7);
-      const e = gsap.parseEase('power3.out')(d);
+      const e = EASE_O3(d);
       gsap.set(r, { scale: 0.15 + e * (3.2 + i * 0.9), opacity: d > 0 ? (1 - d) * 0.85 : 0 });
     });
 
     if (rays) gsap.set(rays, { opacity: burst * (1 - burst) * 2.4, scale: 0.6 + burst * 1.8, rotate: burst * 24 });
-    if (wash) gsap.set(wash, { opacity: gsap.parseEase('power1.out')(burst) * (1 - after * 0.6) * 0.85 });
+    if (wash) gsap.set(wash, { opacity: EASE_O1(burst) * (1 - after * 0.6) * 0.85 });
 
     sparks.forEach((s, i) => {
       const d = clamp01((burst - (i % 4) * 0.05) / 0.8);
-      const e = gsap.parseEase('power3.out')(d);
+      const e = EASE_O3(d);
       s.style.transform = `translate(-50%,-50%) translate(${(parseFloat(s.style.getPropertyValue('--sx')) * e * 34).toFixed(2)}vmin, ${(parseFloat(s.style.getPropertyValue('--sy')) * e * 34).toFixed(2)}vmin) scale(${(1 - d * 0.6).toFixed(3)})`;
       s.style.opacity = ((1 - d) * 0.9).toFixed(3);
     });

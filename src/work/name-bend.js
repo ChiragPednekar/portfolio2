@@ -9,9 +9,23 @@ export function initNameBend(scope = document) {
     const letters = splitLetters(link);
     if (!letters.length) return;
 
+    // pointermove fires far faster than the display refreshes. Without this
+    // rAF throttle every event spawned a tween per letter, so a long name
+    // could queue hundreds of overlapping tweens during one hover.
+    let queued = 0, lastX = 0, rect = null;
+    link.addEventListener('pointerenter', () => { rect = link.getBoundingClientRect(); });
     link.addEventListener('pointermove', (e) => {
-      const b = link.getBoundingClientRect();
-      const px = (e.clientX - b.left) / Math.max(b.width, 1);
+      lastX = e.clientX;
+      if (queued) return;
+      queued = requestAnimationFrame(() => {
+        queued = 0;
+        const b = rect || link.getBoundingClientRect();
+        const px = (lastX - b.left) / Math.max(b.width, 1);
+        apply(px);
+      });
+    });
+
+    function apply(px) {
       letters.forEach((l, i) => {
         const d = Math.abs(i / Math.max(letters.length - 1, 1) - px);
         const f = Math.max(0, 1 - d * 3.2);
@@ -24,9 +38,10 @@ export function initNameBend(scope = document) {
           overwrite: 'auto',
         });
       });
-    });
+    }
 
     link.addEventListener('pointerleave', () => {
+      if (queued) { cancelAnimationFrame(queued); queued = 0; }
       gsap.to(letters, {
         y: 0, skewX: 0, rotate: 0,
         duration: 0.75, ease: 'elastic.out(1, 0.5)',

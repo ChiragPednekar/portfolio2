@@ -229,6 +229,9 @@ export async function initHeroGrid(canvas, opts = {}) {
     if (!state.running) return;
     const dt = Math.min((now - t0) / 1000, 0.05);
     t0 = now;
+    // Once the flight has handed off, the hero is invisible for the rest of the
+    // page. Skip the entire frame rather than clearing and re-projecting it.
+    if (state.alpha <= 0.001 && Math.abs(drag.vx) < 1 && Math.abs(drag.vy) < 1) return;
 
     // Inertial pan with decay — no plugin needed for two axes.
     drag.x += drag.vx * dt;

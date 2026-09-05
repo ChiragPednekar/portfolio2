@@ -228,9 +228,11 @@ export async function initTitleWarp(host, source) {
   function frame(now) {
     raf = requestAnimationFrame(frame);
     if (state.reduced || state.alpha <= 0.001) {
-      gl.clear(gl.COLOR_BUFFER_BIT);
+      // Clear once on the way out, then idle instead of clearing every frame.
+      if (!state.cleared) { gl.clear(gl.COLOR_BUFFER_BIT); state.cleared = true; }
       return;
     }
+    state.cleared = false;
     resizeCanvas(canvas, gl, vp.dpr);
     const W = canvas.width;
     const H = canvas.height;

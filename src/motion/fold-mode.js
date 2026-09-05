@@ -18,57 +18,52 @@ export function initPageBend(scope = document) {
       parent.style.perspectiveOrigin = '50% 50%';
     }
     el.style.transformStyle = 'preserve-3d';
-    el.style.willChange = 'transform, opacity';
 
     const angle = readVar(el, '--fold-angle', 64);
     const round = readVar(el, '--fold-round', 300);
-    const zone = readVar(el, '--fold-zone', 150);
-    const fadeIn = readVar(el, '--fold-fade-in', 380);
-    const fadeOut = readVar(el, '--fold-fade-out', 1000);
     const dir = readVar(el, '--fold-dir', -1);
+    const flat = 0.34;
 
-    const update = () => {
-      const r = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const mid = r.top + r.height / 2;
+    let lastK = -1;
+    let lastSign = 0;
 
-      // Signed distance past each edge, normalised over the fold zone.
-      const overTop = Math.max(0, zone - r.bottom) / Math.max(zone, 1);
-      const overBot = Math.max(0, r.top - (vh - zone)) / Math.max(zone, 1);
-      const top = Math.min(1, Math.max(0, (vh * 0.28 - r.top) / (vh * 0.6)));
-      const bot = Math.min(1, Math.max(0, (r.bottom - vh * 0.72) / (vh * 0.6)));
+    // Driven purely off ScrollTrigger's own progress. The previous version
+    // called getBoundingClientRect() per element per frame and then wrote
+    // styles, so every element forced a fresh layout — the main source of
+    // scroll stutter once the page carried dozens of folded blocks.
+    const update = (self) => {
+      const d = (self.progress - 0.5) * 2;        // -1 entering .. +1 leaving
+      const a = Math.abs(d);
+      const k = a <= flat ? 0 : Math.min(1, (a - flat) / (1 - flat));
+      const sign = d >= 0 ? 1 : -1;
 
-      let t = 0;
-      let sign = 1;
-      if (mid < vh / 2) { t = top; sign = 1; }
-      else { t = bot; sign = -1; }
-      t = Math.min(1, Math.max(0, t));
+      // Skip the write entirely when nothing meaningful changed.
+      if (Math.abs(k - lastK) < 0.002 && sign === lastSign) return;
+      lastK = k; lastSign = sign;
 
-      const rot = dir * sign * angle * t * t;
-      const z = -round * t;
-      const y = sign * round * 0.12 * t;
-
-      const fade = mid < vh / 2
-        ? 1 - Math.min(1, Math.max(0, (fadeIn - r.bottom) / Math.max(fadeIn, 1)))
-        : 1 - Math.min(1, Math.max(0, (r.top - (vh - fadeOut)) / Math.max(fadeOut, 1)) * 0.85);
-
+      if (k === 0) {
+        el.style.willChange = 'auto';
+        gsap.set(el, { rotateX: 0, z: 0, y: 0, opacity: 1, force3D: true });
+        return;
+      }
+      el.style.willChange = 'transform, opacity';
+      const e = k * k;
       gsap.set(el, {
-        rotateX: rot,
-        z,
-        y,
-        opacity: Math.min(1, Math.max(0.05, fade)),
-        transformOrigin: sign > 0 ? '50% 100%' : '50% 0%',
+        rotateX: dir * sign * angle * e,
+        z: -round * k,
+        y: sign * round * 0.12 * k,
+        opacity: Math.max(0.06, 1 - k * 0.92),
+        transformOrigin: sign > 0 ? '50% 0%' : '50% 100%',
         force3D: true,
       });
     };
 
     ScrollTrigger.create({
       trigger: el,
-      start: 'top bottom+=10%',
-      end: 'bottom top-=10%',
+      start: 'top bottom',
+      end: 'bottom top',
       onUpdate: update,
       onRefresh: update,
     });
-    update();
   });
 }

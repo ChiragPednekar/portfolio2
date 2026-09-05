@@ -30,9 +30,12 @@
   display: inline-block;
   font-family: var(--font-display);
   text-transform: uppercase;
-  font-size: clamp(2.6rem, 8vw, 7rem);
-  line-height: .92; letter-spacing: -0.01em;
+  /* Client names run long ("DR DC PLASTIC SURGERY"), so this is smaller than
+     the hero and wraps on word boundaries rather than overflowing. */
+  font-size: clamp(1.9rem, 5.4vw, 4.6rem);
+  line-height: .94; letter-spacing: -0.01em;
   color: var(--headline);
+  max-width: 15ch;
 }
 .work__name-link .focus__mask { overflow: visible; }
 

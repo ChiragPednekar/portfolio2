@@ -108,6 +108,9 @@ body.no-webgl .fallback {
 
 /* ---- shared letter primitives ---- */
 .focus__mask { display: block; overflow: hidden; }
+/* Keeps a word's letters on one line — inline-block glyphs would otherwise
+   let the browser break mid-word. */
+.focus__word { display: inline-block; white-space: nowrap; }
 .focus__letter { display: inline-block; will-change: transform; white-space: pre; }
 
 /* ---- lightbox ---- */
