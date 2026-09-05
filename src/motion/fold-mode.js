@@ -22,7 +22,11 @@ export function initPageBend(scope = document) {
     const angle = readVar(el, '--fold-angle', 64);
     const round = readVar(el, '--fold-round', 300);
     const dir = readVar(el, '--fold-dir', -1);
-    const flat = 0.34;
+    // The flat band has to be WIDE. A block is comfortably readable for most
+    // of its travel, and its heading must stay legible while the reader is
+    // looking at the thing it titles. Curling from 0.34 faded project names
+    // to nothing well before their slider reached the middle of the screen.
+    const flat = 0.72;
 
     let lastK = -1;
     let lastSign = 0;
@@ -52,7 +56,7 @@ export function initPageBend(scope = document) {
         rotateX: dir * sign * angle * e,
         z: -round * k,
         y: sign * round * 0.12 * k,
-        opacity: Math.max(0.06, 1 - k * 0.92),
+        opacity: Math.max(0.45, 1 - k * 0.55),
         transformOrigin: sign > 0 ? '50% 0%' : '50% 100%',
         force3D: true,
       });
