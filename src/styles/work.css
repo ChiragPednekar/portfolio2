@@ -174,3 +174,28 @@
   margin: -.6rem 0 1.6rem;
   font-size: 13px; color: rgba(255,255,255,.42); letter-spacing: .06em;
 }
+
+/* ---- other-work strip ----
+   Its own section, outside .section--work: that carries `perspective`, which
+   would become the containing block for the pin's position:fixed and stop it
+   pinning at all. */
+.section.section--other {
+  max-width: none; margin: 0; display: block;
+  padding: 0 var(--work-indent, 6vw);
+  min-height: 100svh;
+}
+.other__inner {
+  max-width: 1280px; margin: 0 auto;
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 8vh 0;
+}
+.other__inner .other__title { margin-top: 0; }
+
+/* Rows brighten in turn while the strip is held. */
+.other__item { transition: opacity .45s ease, transform .45s ease; opacity: .38; }
+.other__item.is-lit { opacity: 1; }
+.other__item.is-lit .other__kind { color: var(--bright); }
+@media (prefers-reduced-motion: reduce) {
+  .other__item { opacity: 1; transition: none; }
+}

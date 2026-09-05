@@ -184,7 +184,10 @@ a heartbeat</h1>
 
 {work}
 
-    <div class="other" data-fold>
+  </section>
+
+  <section class="section section--other" aria-label="Other work">
+    <div class="other__inner">
       <h2 class="other__title">Other work</h2>
       <p class="other__blurb">
         Short films, weddings and cinematic reels — the work that taught me
