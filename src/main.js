@@ -12,6 +12,13 @@ import { initInkbleed } from './motion/inkbleed.js';
 import { initCopyEmail } from './motion/copy-email.js';
 import { onResize, vp } from './lib/viewport.js';
 
+// Start every load at the top. The browser otherwise restores the previous
+// scroll position, which can drop you inside the pinned story before its
+// ScrollTrigger has run — and those acts are visibility:hidden until it does.
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+window.addEventListener('load', () => window.scrollTo(0, 0), { once: true });
+
 const body = document.body;
 body.classList.add('is-loading');
 

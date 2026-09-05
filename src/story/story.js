@@ -89,9 +89,15 @@ export function initStory(section) {
     pin: true,
     pinSpacing: false,
     anticipatePin: 1,
-    onRefresh: () => stage.classList.add('is-focus-armed'),
-    onUpdate: (self) => {
-      const p = self.progress;
+    // Applied on refresh as well as on scroll. Reveal used to live only in
+    // onUpdate, so a load or resize that landed inside this 19-viewport
+    // section left every act at autoAlpha 0 — a very tall black screen.
+    onRefresh: (self) => { stage.classList.add('is-focus-armed'); apply(self.progress); },
+    onUpdate: (self) => apply(self.progress),
+  });
+
+  function apply(p) {
+    {
       acts.forEach((act, i) => {
         const start = i * span;
         const local = (p - start) / span;
@@ -105,8 +111,8 @@ export function initStory(section) {
         else if (t >= 0.9 || t <= 0.06) hide(act);
         act.scene?.update?.(t);
       });
-    },
-  });
+    }
+  }
 
   ScrollTrigger.addEventListener('refreshInit', () => acts.forEach((a) => a.scene?.measure?.()));
   ScrollTrigger.addEventListener('refresh', () => acts.forEach((a) => a.scene?.measure?.()));

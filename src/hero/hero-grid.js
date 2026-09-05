@@ -93,6 +93,11 @@ const NEAR_SHIFT = 90;
 const PITCH = [560, 750];
 const TILE = [440, 587];   // 3:4, matching the Instagram crop
 
+// Draws into the atlas as images arrive and resolves once a first batch has
+// landed, so the hero can appear immediately. Waiting on all 102 tiles before
+// showing anything meant seconds of black on a cold load.
+const FIRST_BATCH = 18;
+
 async function buildAtlas() {
   const { cols, rows, cell, cellH } = ATLAS;
   const cv = document.createElement('canvas');
@@ -103,25 +108,23 @@ async function buildAtlas() {
   ctx.fillStyle = '#121212';
   ctx.fillRect(0, 0, cv.width, cv.height);
 
-  await Promise.all(
-    TILES.map(
-      (src, i) =>
-        new Promise((res) => {
-          const img = new Image();
-          img.decoding = 'async';
-          img.fetchPriority = i < 6 ? 'high' : 'low';
-          img.onload = () => {
-            const c = i % cols;
-            const r = Math.floor(i / cols);
-            ctx.drawImage(img, c * cell, r * cellH, cell, cellH);
-            res();
-          };
-          img.onerror = res;
-          img.src = src;
-        })
-    )
+  const loads = TILES.map(
+    (src, i) =>
+      new Promise((res) => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.fetchPriority = i < FIRST_BATCH ? 'high' : 'low';
+        img.onload = () => {
+          ctx.drawImage(img, (i % cols) * cell, Math.floor(i / cols) * cellH, cell, cellH);
+          res();
+        };
+        img.onerror = res;
+        img.src = src;
+      })
   );
-  return cv;
+
+  await Promise.all(loads.slice(0, Math.min(FIRST_BATCH, loads.length)));
+  return { canvas: cv, rest: Promise.all(loads) };
 }
 
 export async function initHeroGrid(canvas, opts = {}) {
@@ -136,8 +139,19 @@ export async function initHeroGrid(canvas, opts = {}) {
     return null;
   }
 
-  const atlas = await buildAtlas();
+  const { canvas: atlas, rest } = await buildAtlas();
   const tex = texture(gl, atlas);
+
+  // Re-upload once the remaining tiles have painted into the same canvas.
+  rest.then(() => {
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlas);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  });
 
   const vao = gl.createVertexArray();
   gl.bindVertexArray(vao);
