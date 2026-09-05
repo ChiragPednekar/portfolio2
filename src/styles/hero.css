@@ -44,10 +44,37 @@
 .copy-email-icon { width: 15px; height: 15px; opacity: .7; }
 
 @media (max-width: 767px) {
+  /* The fixed row is logo + 4 tabs + mail button. At phone widths the full
+     email address cannot sit beside the nav, so the label collapses to its
+     icon and stays available to screen readers. */
+  .hero { padding: .85rem 1rem; gap: .5rem; }
   .hero__where { display: none; }
-  .hero { padding: 1rem 1.1rem; }
-  .hero__logo, .hero__logo svg { width: 112px; height: 25px; }
-  .hero__nav a { padding: .45rem .7rem; font-size: 13px; }
+  .hero__logo, .hero__logo svg { width: 96px; height: 21px; }
+  .hero__nav { padding: .22rem; gap: 0; }
+  .hero__nav a { padding: .42rem .5rem; font-size: 12px; }
+  .hero__meta { gap: .5rem; }
+  .hero__mail { padding: .5rem; gap: 0; }
+  .hero__mail > span {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+  .copy-email-icon { width: 17px; height: 17px; opacity: .85; }
+}
+
+@media (max-width: 479px) {
+  .hero { padding: .7rem .8rem; gap: .4rem; }
+  .hero__logo, .hero__logo svg { width: 84px; height: 19px; }
+  .hero__nav a { padding: .38rem .42rem; font-size: 11.5px; }
+}
+
+@media (max-width: 360px) {
+  /* Four tabs plus a logo already fill this width. The mail icon drops out —
+     the footer still carries a labelled copy-email button. */
+  .hero { padding: .6rem .7rem; }
+  .hero__logo, .hero__logo svg { width: 76px; height: 17px; }
+  .hero__nav a { padding: .34rem .38rem; font-size: 11px; }
+  .hero__mail { display: none; }
 }
 
 /* ---- hero title block ---- */

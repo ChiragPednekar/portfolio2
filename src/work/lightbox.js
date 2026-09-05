@@ -9,18 +9,27 @@ export function initLightbox(portal) {
   portal.hidden = true;
   portal.innerHTML = `
     <div class="tile-view__scrim" data-close></div>
-    <figure class="tile-view__frame"><img alt="" class="tile-view__img"></figure>
-    <button class="tile-view__close" type="button" data-close aria-label="Close image">&times;</button>`;
+    <figure class="tile-view__frame">
+      <div class="tile-view__player"></div>
+      <figcaption class="tile-view__cap"></figcaption>
+    </figure>
+    <button class="tile-view__close" type="button" data-close aria-label="Close">&times;</button>`;
 
-  const img = portal.querySelector('.tile-view__img');
+  const player = portal.querySelector('.tile-view__player');
+  const cap = portal.querySelector('.tile-view__cap');
   const frame = portal.querySelector('.tile-view__frame');
   const closeBtn = portal.querySelector('.tile-view__close');
   let opener = null;
 
-  function open(src, alt) {
+  // Nothing is embedded until a play is requested, so no YouTube script or
+  // cookie is loaded on page view.
+  function openVideo(id, title) {
     opener = document.activeElement;
-    img.src = src;
-    img.alt = alt || '';
+    player.innerHTML =
+      `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0&modestbranding=1"` +
+      ` title="${(title || 'Film').replace(/"/g, '&quot;')}" frameborder="0" allow="accelerometer; autoplay;` +
+      ` clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+    cap.textContent = title || '';
     portal.hidden = false;
     window.dispatchEvent(new CustomEvent('lightbox:toggle', { detail: { open: true } }));
     gsap.fromTo(portal, { opacity: 0 }, { opacity: 1, duration: 0.28, ease: 'power2.out' });
@@ -30,9 +39,12 @@ export function initLightbox(portal) {
 
   function close() {
     window.dispatchEvent(new CustomEvent('lightbox:toggle', { detail: { open: false } }));
+    // Tear the iframe down immediately so audio stops the moment it is asked to,
+    // not when the fade tween happens to finish.
+    player.innerHTML = '';
     gsap.to(portal, {
       opacity: 0, duration: 0.22, ease: 'power2.in',
-      onComplete: () => { portal.hidden = true; img.src = ''; opener?.focus?.(); },
+      onComplete: () => { portal.hidden = true; cap.textContent = ''; opener?.focus?.(); },
     });
   }
 
@@ -44,8 +56,9 @@ export function initLightbox(portal) {
   });
 
   document.addEventListener('click', (e) => {
-    const shot = e.target.closest('.work__shot');
-    if (!shot) return;
-    open(shot.currentSrc || shot.src, shot.alt);
+    const btn = e.target.closest('[data-video-id]');
+    if (!btn) return;
+    e.preventDefault();
+    openVideo(btn.dataset.videoId, btn.dataset.videoTitle);
   });
 }

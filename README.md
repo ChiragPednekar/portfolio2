@@ -1,8 +1,58 @@
-# Motion Portfolio
+# Afeef Momin — Portfolio
 
-A vanilla-JS, Vite-bundled portfolio rebuilding the architecture and motion system
+Filmmaker and creative head. Healthcare and brand films lead; short films, weddings
+and music videos sit under Other Work.
+
+A vanilla-JS, Vite-bundled site rebuilding the architecture and motion system
 described in the audit brief. No framework, no three.js, no external ambient-WebGL
 service.
+
+## Before this goes live
+
+Five things are placeholders because they were never supplied. **Do not ship without
+replacing them** — the first two are the site's whole purpose.
+
+| What | Where | Current placeholder |
+| --- | --- | --- |
+| Email address | `index.html` + `other-work/index.html` (`mailto:` ×3, `data-copy-email`) | `afeef@example.com` |
+| WhatsApp number | `index.html`, `.outro__secondary` | `https://wa.me/000000000000` |
+| CV file | `.outro__cv` → `public/afeef-momin-cv.pdf` | link points at a file that does not exist |
+| Portrait photo | `public/about/portrait.svg` | abstract placeholder, not a photo |
+| Location | header `.hero__meta` | omitted entirely — never confirmed for public display |
+
+```bash
+# after adding the real address:
+grep -rl 'afeef@example.com' index.html other-work/index.html | xargs sed -i '' 's/afeef@example.com/REAL@ADDRESS/g'
+```
+
+## Content model
+
+15 healthcare films, grouped by client into 4 projects:
+
+| Client | Films |
+| --- | --- |
+| Shree IVF Clinic — Dr Jay Mehta, Mumbai | 9 |
+| Dr Supriya Puranik — Pune | 3 |
+| Dr DC Plastic Surgery — Pune | 2 |
+| Lokmanya Hospitals — Dr Narendra Vaidya | 1 |
+
+Film titles were pulled from YouTube's public oEmbed endpoint, not typed by hand.
+Thumbnails are downloaded to `public/films/<id>.jpg` and served same-origin — a
+cross-origin image would taint the canvas atlas and break the WebGL upload. The
+same frames feed the hero grid via `src/hero/gallery-data.js`.
+
+Films play in the existing lightbox as a `youtube-nocookie` iframe, built only on
+click, so no YouTube script or cookie loads on page view. The iframe is torn down
+on close so audio stops immediately rather than when the fade tween finishes.
+
+To change the grouping or add films, edit `PROJECTS` in `scripts/build-index.py`
+and re-run:
+
+```bash
+python3 scripts/build-index.py && python3 scripts/emit-index.py
+```
+
+Project blurbs are drafts written from the film titles — worth Afeef's review.
 
 ```bash
 npm install
@@ -15,7 +65,7 @@ npm run preview
 
 | Concern | Choice |
 | --- | --- |
-| Build | Vite, multi-page (`/`, `/work/aurora/`, `/work/pangeam/`, `/work/lumus/`) |
+| Build | Vite, multi-page (`/`, `/other-work/`) |
 | Language | Vanilla ES modules, dynamic `import()` past the hero |
 | Smooth scroll | Lenis (`html.lenis`) |
 | Animation | GSAP 3 + ScrollTrigger + SplitText + Draggable + InertiaPlugin |
@@ -38,9 +88,9 @@ their webfont files can't be reused. Substituted with Anton, Inter Tight and
 Dancing Script (all OFL, via Google Fonts). Swap `--font-display`, `--font-ui`,
 `--font-script` in `src/styles/tokens.css` once licences are in hand.
 
-**Content.** All copy, case studies, imagery and the wordmark are original
-placeholders. Screenshots are generated abstractions (`npm run` → `node
-scripts/gen-assets.mjs`); replace `public/shots/*.svg` and `public/about/portrait.svg`.
+**Content.** Copy, bio and film list are Afeef's own. The wordmark is a plain type
+treatment, not a designed logo. `public/shots/*.svg` are leftover abstract
+placeholders from the scaffold and are no longer referenced by the homepage.
 
 **No Unicorn Studio.** The two ambient scenes it provided are hand-written instead
 (`src/story/listening.js` canvas field, and the CSS conic/mask liquid ring in
@@ -92,6 +142,24 @@ Three geometry notes, learned the hard way, are commented in the shader:
 height; `--story-scale` steps `1 → .846 → .699 → .628` across breakpoints. The
 slider exposes `--spv`, `--gap`, `--bend-flat`, `--bend-angle`, `--bend-depth`,
 `--bend-round`, `--bend-dir`; the section fold exposes the `--fold-*` set.
+
+## Mobile header
+
+The fixed header is logo + four tabs + mail button, which does not fit on a phone
+at full size. It steps down in three tiers:
+
+| Width | Behaviour |
+| --- | --- |
+| ≤767px | Location hidden; logo 96px; the email address collapses to its icon, label kept for screen readers |
+| ≤479px | Logo 84px, tabs 11.5px |
+| ≤360px | Logo 76px; the mail icon drops out entirely — the footer still carries a labelled copy-email button |
+
+Because `.hero` is `position: fixed`, overflow here does **not** extend
+`document.scrollWidth`, so a broken header shows up as content sitting off-screen
+rather than as a horizontal scrollbar. Check element right-edges against
+`innerWidth`, not `scrollWidth`, when changing this.
+
+Verified clean at 390px and 320px.
 
 ## Accessibility
 

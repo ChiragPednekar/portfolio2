@@ -90,8 +90,8 @@ const ROWS = 5;
 const LAYERS = 6;
 const PERIOD = 2600;
 const NEAR_SHIFT = 90;
-const PITCH = [640, 430];
-const TILE = [520, 325];
+const PITCH = [640, 400];
+const TILE = [520, 292];   // 16:9, matching the film frames
 
 async function buildAtlas() {
   const { cols, rows, cell, cellH } = ATLAS;

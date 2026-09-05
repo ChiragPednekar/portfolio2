@@ -8,9 +8,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        aurora: resolve(__dirname, 'work/aurora/index.html'),
-        pangeam: resolve(__dirname, 'work/pangeam/index.html'),
-        lumus: resolve(__dirname, 'work/lumus/index.html'),
+        other: resolve(__dirname, 'other-work/index.html'),
       },
       output: {
         // Keep post-hero modules in their own chunks so the entry stays small.
