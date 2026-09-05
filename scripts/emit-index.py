@@ -187,15 +187,15 @@ a heartbeat</h1>
     <div class="other" data-fold>
       <h2 class="other__title">Other work</h2>
       <p class="other__blurb">
-        Short films, weddings and music videos — the work that taught me
+        Short films, weddings and cinematic reels — the work that taught me
         performance, pressure and range.
       </p>
       <ul class="other__list">
-        <li class="other__item"><span class="other__kind">Short films</span><span class="other__note">Directing performance and structure, not a brief.</span></li>
-        <li class="other__item"><span class="other__kind">Weddings</span><span class="other__note">Live, unrepeatable, high-pressure. Nothing goes wrong on a corporate set that hasn't already gone wrong at a wedding.</span></li>
-        <li class="other__item"><span class="other__kind">Music videos</span><span class="other__note">Range and visual energy. The only rule was that it had to look good loud.</span></li>
+        <li class="other__item"><span class="other__kind">Short films &amp; documentaries</span><span class="other__note">Directing performance and structure, not a brief. <b>12 films</b></span></li>
+        <li class="other__item"><span class="other__kind">Wedding films</span><span class="other__note">Live, unrepeatable, high-pressure. Nothing goes wrong on a corporate set that hasn't already gone wrong at a wedding. <b>9 films</b></span></li>
+        <li class="other__item"><span class="other__kind">Cinematic reels</span><span class="other__note">Range and visual energy — the city, shot for the feed. <b>7 films</b></span></li>
       </ul>
-      <a class="work__link" href="/other-work/" data-elastic-pulse-btn>See other work</a>
+      <a class="work__link" href="/other-work/" data-elastic-pulse-btn>See all 28 &rarr;</a>
     </div>
 
   </section>
