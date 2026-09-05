@@ -35,6 +35,23 @@ const veil = document.querySelector('.nav-veil');
 
 let grid = null;
 let warp = null;
+let flightST = null;
+
+// Single source of truth for hero visibility at a given flight progress.
+// This used to live only inside the trigger's onUpdate, which made it a latch:
+// one transient measurement while the pins were still settling could set
+// visibility:hidden and alpha 0, and nothing re-ran until the user scrolled.
+function syncHero(p) {
+  grid?.setFlight(p);
+  const titleFade = Math.max(0, 1 - p * 3.2);
+  warp?.setAlpha(titleFade);
+  if (heroBlock) {
+    heroBlock.style.opacity = String(titleFade);
+    heroBlock.style.visibility = titleFade < 0.01 ? 'hidden' : 'visible';
+  }
+  grid?.setAlpha(p > 0.86 ? Math.max(0, 1 - (p - 0.86) / 0.14) : 1);
+  if (veil) veil.style.opacity = p > 0.82 ? String(Math.min(1, (p - 0.82) / 0.12)) : '0';
+}
 
 function fallbackToDom() {
   body.classList.add('no-webgl');
@@ -68,6 +85,10 @@ async function bootHero() {
     })(t0);
 
     body.classList.add('hero-css-on');
+    // bootHero can resolve after bootRest has already built the flight
+    // trigger, so adopt the current scroll state rather than whatever the
+    // fade-in left behind.
+    syncHero(flightST ? flightST.progress : 0);
   } catch (e) {
     console.warn('[hero]', e);
     fallbackToDom();
@@ -118,26 +139,15 @@ async function bootRest() {
   // The flight spacer drives the hero dolly and hands off through the veil.
   const flight = document.querySelector('.flight');
   if (flight) {
-    ScrollTrigger.create({
+    flightST = ScrollTrigger.create({
       trigger: flight,
       start: 'top top',
       end: 'bottom bottom',
       scrub: true,
-      onUpdate: (self) => {
-        const p = self.progress;
-        grid?.setFlight(p);
-        // Title fades out early; the grid rides the whole flight. The whole
-        // fixed title block goes with it, or the eyebrow and scroll hint sit
-        // on top of the lede forever.
-        const titleFade = Math.max(0, 1 - p * 3.2);
-        warp?.setAlpha(titleFade);
-        if (heroBlock) {
-          heroBlock.style.opacity = String(titleFade);
-          heroBlock.style.visibility = titleFade < 0.01 ? 'hidden' : 'visible';
-        }
-        grid?.setAlpha(p > 0.86 ? Math.max(0, 1 - (p - 0.86) / 0.14) : 1);
-        if (veil) veil.style.opacity = p > 0.82 ? String(Math.min(1, (p - 0.82) / 0.12)) : '0';
-      },
+      onUpdate: (self) => syncHero(self.progress),
+      // Re-applied after every measurement, so a refresh can never leave the
+      // hero latched hidden.
+      onRefresh: (self) => syncHero(self.progress),
       onLeave: () => { if (veil) veil.style.opacity = '0'; },
     });
   }
