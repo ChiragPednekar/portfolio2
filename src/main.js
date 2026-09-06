@@ -56,7 +56,21 @@ function syncHero(p) {
 function fallbackToDom() {
   body.classList.add('no-webgl');
   if (stage) stage.style.display = 'none';
+  // Whatever went wrong, the headline must end up visible.
+  heroTitle?.classList.remove('is-warping');
+  if (heroBlock) { heroBlock.style.opacity = '1'; heroBlock.style.visibility = 'visible'; }
+  body.classList.remove('is-loading');
 }
+
+// Last resort. If the hero has not come up in a few seconds — a stalled image,
+// a lost context, a rejected import — show the DOM version rather than leave
+// the viewport black.
+const heroWatchdog = setTimeout(() => {
+  if (!body.classList.contains('hero-css-on')) {
+    console.warn('[hero] boot timed out, falling back to DOM');
+    fallbackToDom();
+  }
+}, 4000);
 
 async function bootHero() {
   if (!stage) return;
@@ -84,6 +98,7 @@ async function bootHero() {
       if (k < 1) requestAnimationFrame(fadeIn);
     })(t0);
 
+    clearTimeout(heroWatchdog);
     body.classList.add('hero-css-on');
     // bootHero can resolve after bootRest has already built the flight
     // trigger, so adopt the current scroll state rather than whatever the

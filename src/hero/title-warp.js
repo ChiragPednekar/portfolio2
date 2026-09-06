@@ -230,9 +230,13 @@ export async function initTitleWarp(host, source) {
     if (state.reduced || state.alpha <= 0.001) {
       // Clear once on the way out, then idle instead of clearing every frame.
       if (!state.cleared) { gl.clear(gl.COLOR_BUFFER_BIT); state.cleared = true; }
+      // Hand the headline back to the DOM. The canvas is not painting, so if
+      // this stayed on we would show nothing at all.
+      if (state.warping) { source.classList.remove('is-warping'); state.warping = false; }
       return;
     }
     state.cleared = false;
+    if (!state.warping) { source.classList.add('is-warping'); state.warping = true; }
     resizeCanvas(canvas, gl, vp.dpr);
     const W = canvas.width;
     const H = canvas.height;
@@ -275,8 +279,8 @@ export async function initTitleWarp(host, source) {
 
   function applyMode(reduced) {
     state.reduced = reduced;
-    source.classList.toggle('is-warping', !reduced);
     canvas.style.display = reduced ? 'none' : '';
+    if (reduced && state.warping) { source.classList.remove('is-warping'); state.warping = false; }
   }
   applyMode(vp.reduced);
   const offPref = onMotionPref(applyMode);

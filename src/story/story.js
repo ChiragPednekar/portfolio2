@@ -14,6 +14,9 @@ const ORDERS = {
 
 export function initStory(section) {
   if (!section) return;
+  // Only now is it safe for CSS to hide the acts — up to this point they must
+  // stay visible, or a failure anywhere upstream leaves 19 blank viewports.
+  document.documentElement.classList.add('js-ready');
   const stage = section.querySelector('.focus__stage');
   if (!stage) return;
 
