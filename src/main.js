@@ -41,7 +41,19 @@ let flightST = null;
 // This used to live only inside the trigger's onUpdate, which made it a latch:
 // one transient measurement while the pins were still settling could set
 // visibility:hidden and alpha 0, and nothing re-ran until the user scrolled.
-function syncHero(p) {
+// The veil is a full-screen #000 layer at z-index 6 — the only thing on the
+// page that can black out the whole viewport. It rises to mask the handoff and
+// must be back to 0 BY the end of the flight, so no exit path can strand it.
+// It previously climbed to 1 at p=0.94 and stayed there, cleared only by
+// onLeave — which never fires if you refresh past the flight, or if you
+// re-enter it scrolling upward.
+function veilAt(p) {
+  if (p <= 0.82 || p >= 1) return 0;
+  const t = (p - 0.82) / 0.18;           // 0..1 across the handoff band
+  return t < 0.5 ? t / 0.5 : (1 - t) / 0.5;
+}
+
+function syncHero(p, active = true) {
   grid?.setFlight(p);
   const titleFade = Math.max(0, 1 - p * 3.2);
   warp?.setAlpha(titleFade);
@@ -50,7 +62,7 @@ function syncHero(p) {
     heroBlock.style.visibility = titleFade < 0.01 ? 'hidden' : 'visible';
   }
   grid?.setAlpha(p > 0.86 ? Math.max(0, 1 - (p - 0.86) / 0.14) : 1);
-  if (veil) veil.style.opacity = p > 0.82 ? String(Math.min(1, (p - 0.82) / 0.12)) : '0';
+  if (veil) veil.style.opacity = String(active ? veilAt(p) : 0);
 }
 
 function fallbackToDom() {
@@ -119,7 +131,15 @@ async function bootRest() {
   booted = true;
 
   const { initScroll, gsap, ScrollTrigger } = await import('./lib/scroll.js');
-  initScroll();
+  const lenis = initScroll();
+
+  // Force the top here, not at module load. The browser can restore scroll
+  // after the load event, and Lenis locks onto whatever position it finds when
+  // it is constructed — so an earlier scrollTo(0,0) gets silently undone.
+  if (!location.hash) {
+    lenis?.scrollTo(0, { immediate: true, force: true });
+    window.scrollTo(0, 0);
+  }
 
   const [
     { initHighlightText },
@@ -159,11 +179,15 @@ async function bootRest() {
       start: 'top top',
       end: 'bottom bottom',
       scrub: true,
-      onUpdate: (self) => syncHero(self.progress),
+      onUpdate: (self) => syncHero(self.progress, self.isActive),
       // Re-applied after every measurement, so a refresh can never leave the
       // hero latched hidden.
-      onRefresh: (self) => syncHero(self.progress),
+      onRefresh: (self) => syncHero(self.progress, self.isActive),
+      // Belt and braces: whenever the flight is not the active trigger, the
+      // veil is cleared outright.
+      onToggle: (self) => { if (veil && !self.isActive) veil.style.opacity = '0'; },
       onLeave: () => { if (veil) veil.style.opacity = '0'; },
+      onLeaveBack: () => { if (veil) veil.style.opacity = '0'; },
     });
   }
 
