@@ -106,6 +106,6 @@ export const TILES = [
 ];
 
 // 3:4 cells matching the Instagram grid crop. 12 x 9 = 108 slots holds
-// 102 tiles, and the resulting 3072x3069 texture stays well inside the
+// 102 tiles, and the resulting 2688x2691 texture stays well inside the
 // 4096 limit that older mobile GPUs enforce.
-export const ATLAS = { cols: 12, rows: 9, cell: 256, cellH: 341 };
+export const ATLAS = { cols: 12, rows: 9, cell: 224, cellH: 299 };

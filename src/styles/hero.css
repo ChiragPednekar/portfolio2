@@ -15,8 +15,10 @@
 .hero__nav {
   position: relative; display: flex; align-items: center; gap: .125rem;
   padding: .3rem; border-radius: 999px; background: var(--glass);
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  /* Cheaper blur: this is a fixed element, so the compositor re-blurs its
+     backdrop on every scroll frame. */
+  backdrop-filter: blur(10px) saturate(1.15);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
 }
 .hero__nav a {
   position: relative; z-index: 2;

@@ -81,7 +81,9 @@ html:not(.js-ready) .story__act { position: relative; inset: auto; padding: 12vh
   opacity: 0;
 }
 .focus__wash {
-  width: 200vmax; height: 200vmax; opacity: 0; border-radius: 0;
+  /* 200vmax was a 3840px square layer on a 1080p screen; the gradient has
+     fallen off long before that. */
+  width: 130vmax; height: 130vmax; opacity: 0; border-radius: 0;
   background: radial-gradient(circle at 50% 50%, #b14bff44 0%, #4dd2ff22 34%, transparent 62%);
 }
 .focus__charge {
