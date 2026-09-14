@@ -24,7 +24,9 @@ function initOtherStrip() {
     start: 'top top',
     end: '+=250%',
     pin: inner,
-    pinSpacing: true,
+    // The section reserves its own 350svh, so ScrollTrigger must not add a
+    // spacer on top of it — see the note in work.css.
+    pinSpacing: false,
     anticipatePin: 1,
     onUpdate: (self) => {
       const p = self.progress;

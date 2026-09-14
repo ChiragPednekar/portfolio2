@@ -179,10 +179,14 @@
    Its own section, outside .section--work: that carries `perspective`, which
    would become the containing block for the pin's position:fixed and stop it
    pinning at all. */
+/* 350svh = one screen of content plus the 250% the pin holds it for. Declaring
+   the hold here rather than letting ScrollTrigger add a pin-spacer keeps the
+   document exactly as tall before JS measures it as after — which is what lets
+   a reload land on the right content in its first frame instead of a black one. */
 .section.section--other {
   max-width: none; margin: 0; display: block;
   padding: 0 var(--work-indent, 6vw);
-  min-height: 100svh;
+  min-height: 350svh;
 }
 .other__inner {
   max-width: 1280px; margin: 0 auto;
