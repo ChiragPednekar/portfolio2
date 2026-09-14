@@ -38,7 +38,6 @@ HEAD = '''<!doctype html>
 
 # NOTE: contact details are placeholders — see README "Before this goes live".
 EMAIL = 'afeef@example.com'
-WHATSAPP = 'https://wa.me/000000000000'
 
 body = f'''{HEAD}
 <header class="hero" data-bouncy-tabs-init>
@@ -242,14 +241,6 @@ a heartbeat</h1>
     <div class="outro__fx" aria-hidden="true"></div>
     <div class="outro__inner">
       <h2 class="outro__title">Let's talk about the film you're trying to make</h2>
-      <div class="outro__cta">
-        <a class="outro__primary" href="mailto:{EMAIL}?subject=Project%20enquiry" data-elastic-pulse-btn>
-          Start a conversation
-        </a>
-        <a class="outro__secondary" href="{WHATSAPP}" target="_blank" rel="noopener noreferrer" data-elastic-pulse-btn>
-          WhatsApp
-        </a>
-      </div>
     </div>
 
     <div class="outro__roll" aria-hidden="true">
@@ -257,18 +248,6 @@ a heartbeat</h1>
     </div>
 
     <div class="outro__meta">
-      <div class="outro__social">
-        <button class="outro__mail" type="button" data-copy data-copy-email="{EMAIL}" data-elastic-pulse-btn>
-          <svg class="copy-email-icon copy-email-icon--lg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-            <rect x="1.5" y="3.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.3"/>
-            <path d="M2 5l6 4 6-4" fill="none" stroke="currentColor" stroke-width="1.3"/>
-          </svg>
-          <span>Copy email</span>
-        </button>
-        <!-- TODO: add the real CV file to public/ and point this at it. -->
-        <a class="outro__cv" href="/afeef-momin-cv.pdf" download>Download CV</a>
-        <span class="outro__copied" role="status" aria-live="polite"></span>
-      </div>
       <span>&copy; 2026 Afeef Momin</span>
     </div>
   </footer>
