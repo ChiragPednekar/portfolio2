@@ -183,8 +183,16 @@
    the hold here rather than letting ScrollTrigger add a pin-spacer keeps the
    document exactly as tall before JS measures it as after — which is what lets
    a reload land on the right content in its first frame instead of a black one. */
+/* align-content: start is load-bearing, not tidiness. .section sets
+   place-content: center, and Chrome applies align-content to block containers
+   too — so the 100svh strip was being centred inside these 350svh, landing 960px
+   down on a 768px viewport. ScrollTrigger then pinned it at that offset and held
+   it there, entirely below the fold, for the whole 250% hold: two and a half
+   screens of black between the films and the About section. .section--focus
+   carries the same guard for the same reason. */
 .section.section--other {
   max-width: none; margin: 0; display: block;
+  align-content: start;
   padding: 0 var(--work-indent, 6vw);
   min-height: 350svh;
 }
