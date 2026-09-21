@@ -209,5 +209,10 @@
 .other__item.is-lit { opacity: 1; }
 .other__item.is-lit .other__kind { color: var(--bright); }
 @media (prefers-reduced-motion: reduce) {
+  /* initOtherStrip creates no pin in reduced motion, so nothing would occupy
+     the 250% of scroll the 350svh above reserves for it — it would read as two
+     and a half screens of black under the strip. Hand the height back.
+     .section--focus drops its min-height in reduced motion for the same reason. */
+  .section.section--other { min-height: 100svh; }
   .other__item { opacity: 1; transition: none; }
 }
