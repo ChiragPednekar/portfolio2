@@ -155,6 +155,14 @@ function syncHero(p, active = true) {
   if (veil) veil.style.opacity = String(active ? veilAt(p) : 0);
 }
 
+// The flight's terminal state, decided by scroll position rather than by a
+// scrub value that may never have arrived. Past the end the hero is gone;
+// above the start it is whole.
+function settleHero(self) {
+  if (self.isActive) return;
+  syncHero(self.scroll() >= self.end ? 1 : 0, false);
+}
+
 function fallbackToDom() {
   body.classList.add('no-webgl');
   if (stage) stage.style.display = 'none';
@@ -297,11 +305,19 @@ async function bootRest() {
       // Re-applied after every measurement, so a refresh can never leave the
       // hero latched hidden.
       onRefresh: (self) => syncHero(self.progress, self.isActive),
-      // Belt and braces: whenever the flight is not the active trigger, the
-      // veil is cleared outright.
-      onToggle: (self) => { if (veil && !self.isActive) veil.style.opacity = '0'; },
-      onLeave: () => { if (veil) veil.style.opacity = '0'; },
-      onLeaveBack: () => { if (veil) veil.style.opacity = '0'; },
+      // Whenever the flight stops being the active trigger, settle the hero to
+      // the end state that scroll position implies, rather than leaving it
+      // wherever the scrub happened to be.
+      //
+      // scrub eases progress toward the scroll position over time. A large jump
+      // — a restored refresh, an anchor, a hard fling on a phone — can take the
+      // trigger out of range before that easing has finished, so onUpdate never
+      // delivers the final 1. The grid was then stranded at full alpha, and
+      // since .doc and every section under it are transparent over a canvas at
+      // z-index 1, the hero photographs showed through the whole page below.
+      onToggle: settleHero,
+      onLeave: settleHero,
+      onLeaveBack: settleHero,
     });
   }
 
