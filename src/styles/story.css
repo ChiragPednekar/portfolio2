@@ -173,6 +173,48 @@ html:not(.js-ready) .story__act { position: relative; inset: auto; padding: 12vh
 @keyframes cube-spin  { from { rotate: -1.2deg; } to { rotate: 1.2deg; } }
 
 /* ---- Act 4: validation ---- */
+/* Act 4's hard numbers. The act argues that the work landed, so it should be
+   able to show it. Sits directly under the title — .story__act is a centred
+   grid, so the two stack as one centred block — and well above the note and
+   the sticker pile, which both live at the bottom of the slab. No
+   mix-blend-mode here: the title can invert against the stickers, these have
+   to stay legible. */
+/* .story__act is a grid whose rows stretch to fill the slab, so a second
+   in-flow child gets centred in its own half — which dropped these onto the
+   note at the bottom. Packing the rows to content and centring the group keeps
+   the title and the figures together as one block. Scoped to this act: the
+   other three have a single child and must keep stretching. */
+.story__act[data-act="validation"] { align-content: center; gap: 3vh; }
+
+.validation__proof {
+  position: relative; z-index: 5;
+  margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: clamp(1.4rem, 6vw, 4.5rem);
+  text-align: center;
+}
+.validation__proof > div { display: grid; gap: .3rem; }
+.validation__proof dt {
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5.4vw, 3.6rem);
+  line-height: 1; letter-spacing: -0.01em;
+  color: var(--bright);
+}
+.validation__proof dd {
+  margin: 0;
+  font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255, 255, 255, .6);
+}
+/* Gated on js-ready for the same reason the acts are: without JS nothing ever
+   adds .is-active, and these must not be invisible in that fallback. */
+html.js-ready .validation__proof {
+  opacity: 0; transform: translateY(14px);
+  transition: opacity .7s ease .22s, transform .7s ease .22s;
+}
+html.js-ready .story__act.is-active .validation__proof {
+  opacity: 1; transform: none;
+}
+
 .validation__scene { position: absolute; inset: 0; z-index: 2; }
 .validation__canvas { position: absolute; inset: 0; }
 
@@ -182,5 +224,6 @@ html:not(.js-ready) .story__act { position: relative; inset: auto; padding: 12vh
   .focus__stage { height: auto; display: block; }
   .story__act { position: relative; inset: auto; visibility: visible; padding: 14vh 6vw; }
   .validation__canvas { display: none; }
+  html.js-ready .validation__proof { opacity: 1; transform: none; transition: none; }
   .validation__scene { animation: fallback-earn .4s ease both; }
 }
