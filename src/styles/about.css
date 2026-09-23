@@ -26,10 +26,14 @@
   line-height: .94; letter-spacing: -0.01em;
   color: var(--headline-alt); max-width: 16ch;
 }
+/* auto-fit rather than a fixed 3, because there are five figures now and a
+   hard 3-up leaves one orphaned cell on the second row. This lays them out as
+   a stat bar on a wide screen and folds to two rows, then one column, as it
+   narrows. */
 .about__stats {
   list-style: none; margin: 0 0 4vh; padding: 0;
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem; max-width: 780px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem 1.4rem; max-width: 1000px;
 }
 .about__stats li { display: grid; gap: .35rem; align-content: start; }
 .about__stats strong {
