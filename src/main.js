@@ -10,6 +10,7 @@ import './styles/about.css';
 import { initBouncyTabs } from './motion/bouncy-tabs.js';
 import { initInkbleed } from './motion/inkbleed.js';
 import { initCopyEmail } from './motion/copy-email.js';
+import { initContactMenu } from './motion/contact-menu.js';
 import { onResize, vp } from './lib/viewport.js';
 
 // ---- scroll restoration --------------------------------------------------
@@ -105,6 +106,7 @@ body.classList.add('is-loading');
 initBouncyTabs(document.querySelector('.hero'));
 initInkbleed(document.querySelector('.hero__logo svg'));
 initCopyEmail(document);
+initContactMenu(document);
 
 // ---- hero WebGL ----------------------------------------------------------
 const stage = document.querySelector('.stage-gl');

@@ -37,7 +37,8 @@ HEAD = '''<!doctype html>
 '''
 
 # NOTE: contact details are placeholders — see README "Before this goes live".
-EMAIL = 'afeef@example.com'
+EMAIL = 'mominafeef89@gmail.com'
+PHONE = '+917887566638'
 
 body = f'''{HEAD}
 <header class="hero" data-bouncy-tabs-init>
@@ -56,14 +57,38 @@ body = f'''{HEAD}
 
   <div class="hero__meta">
     <!-- TODO: location intentionally omitted — not confirmed for public display. -->
-    <a class="hero__mail" href="mailto:{EMAIL}" data-elastic-pulse-btn
-       aria-label="Email Afeef Momin">
-      <svg class="copy-email-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-        <rect x="1.5" y="3.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.3"/>
-        <path d="M2 5l6 4 6-4" fill="none" stroke="currentColor" stroke-width="1.3"/>
-      </svg>
-      <span>Get in touch</span>
-    </a>
+    <div class="hero__contact" data-contact>
+      <button class="hero__mail" type="button" data-elastic-pulse-btn
+              data-contact-toggle aria-expanded="false" aria-controls="contact-menu">
+        <svg class="copy-email-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <rect x="1.5" y="3.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M2 5l6 4 6-4" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        </svg>
+        <span>Get in touch</span>
+      </button>
+      <div class="hero__contact-menu" id="contact-menu" data-contact-menu hidden>
+        <a class="hero__contact-item" href="mailto:mominafeef89@gmail.com">
+          <svg class="copy-email-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <rect x="1.5" y="3.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M2 5l6 4 6-4" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        </svg>
+          <span class="hero__contact-text">
+            <span class="hero__contact-kind">Email</span>
+            <span class="hero__contact-value">Mominafeef89@gmail.com</span>
+          </span>
+        </a>
+        <a class="hero__contact-item" href="tel:+917887566638">
+          <svg class="copy-email-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <path d="M5.2 2.2 3.1 2a1.3 1.3 0 0 0-1.4 1.1C1.4 7.6 5 12.6 9.4 13.8a1.3 1.3 0 0 0 1.6-.9l.6-2-2.6-1.2-1 1.2A8.3 8.3 0 0 1 5 6.6l1.4-.8-1.2-3.6Z"
+                fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+        </svg>
+          <span class="hero__contact-text">
+            <span class="hero__contact-kind">Phone</span>
+            <span class="hero__contact-value">+91 78875 66638</span>
+          </span>
+        </a>
+      </div>
+    </div>
   </div>
 </header>
 

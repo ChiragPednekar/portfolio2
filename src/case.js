@@ -6,10 +6,12 @@ import './styles/case.css';
 
 import { initInkbleed } from './motion/inkbleed.js';
 import { initCopyEmail } from './motion/copy-email.js';
+import { initContactMenu } from './motion/contact-menu.js';
 import { initElasticPulse } from './motion/elastic-pulse.js';
 
 initInkbleed(document.querySelector('.hero__logo svg'));
 initCopyEmail(document);
+initContactMenu(document);
 initElasticPulse(document);
 document.body.classList.remove('is-loading');
 
